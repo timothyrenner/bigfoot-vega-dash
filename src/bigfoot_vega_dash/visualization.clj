@@ -21,6 +21,12 @@
   "Removes blank string fields from the list of maps."
   (filter #(not (str/blank? ((keyword field) %))) data))
 
+(defn- data-spec [data]
+  "Return the specifier for the data based on whether it's a name or sequence."
+  (if (sequential? data)
+    {:data {:values data}}
+    {:data {:name data}}))
+
 (defn- bar-chart-categorical [field data]
   (let [
     plot {
@@ -28,9 +34,7 @@
       :encoding {
         :x {:field field :type "nominal"}
         :y {:aggregate "count" :type "quantitative"}}}]
-    (if (sequential? data)
-      (merge {:data {:values data}} plot)
-      (merge {:data {:name data}} plot))))
+    (merge (data-spec data) plot)))
 
 (defn- histogram [field data & {:keys [step] :or {step nil}}]
   (let [
@@ -39,9 +43,7 @@
       :encoding {
         :x {:field field :type "quantitative" :bin {:step step}}
         :y {:aggregate "count" :type "quantitative"}}}]
-    (if (sequential? data)
-      (merge {:data {:values data}} plot)
-      (merge {:data {:name data}} plot))))
+    (merge (data-spec data) plot)))
 
 (defn- line [field data]
   (let [
@@ -50,9 +52,7 @@
       :encoding {
         :x {:field field :type "quantitative"}
         :y {:aggregate "count" :type "quantitative"}}}]
-  (if (sequential? data)
-    (merge {:data {:values data}} plot)
-    (merge {:data {:name data}} plot))))
+  (merge (data-spec data) plot)))
 
 (defn bigfoot-sightings-by-year [bigfoot-data]
   "Draws a line chart of the number of bigfoot sightings each year."

@@ -17,7 +17,7 @@
     bigfoot-data (bigv/csv-to-maps data-file)
     usa (slurp polygon-file)
     ;; Debug - just the map for now since it's the hardest.
-    visualization (bigv/bigfoot-sightings-map bigfoot-data usa)]
+    visualization (bigv/bigfoot-dashboard bigfoot-data)]
     (spit output-file
       (html5
         {:lang "en"}
