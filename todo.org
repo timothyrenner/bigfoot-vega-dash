@@ -3,9 +3,9 @@
 ** TODO Add interactivity.
 
 * Individual Plots
-** PROGRESS Refactor plots to use named datasets.
-** PROGRESS Un-hard code the dataset naming within the plot functions.
-** TODO Add custom axis labels to individual plots.
+** DONE Refactor plots to use named datasets.
+** DONE Un-hard code the dataset naming within the plot functions.
+** TODO Add custom axis labels / titles to individual plots.
 ** TODO Add filter for dates on time plot.
 
 * Driver

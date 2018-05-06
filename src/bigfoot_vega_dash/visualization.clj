@@ -23,7 +23,7 @@
 
 (defn- data-spec [data]
   "Return the specifier for the data based on whether it's a name or sequence."
-  (if (sequential? data)
+  (if (coll? data)
     {:data {:values data}}
     {:data {:name data}}))
 
@@ -53,6 +53,42 @@
         :x {:field field :type "quantitative"}
         :y {:aggregate "count" :type "quantitative"}}}]
   (merge (data-spec data) plot)))
+
+(defn- geo-polygon
+  [polygon feature & 
+    {
+      :keys [fill stroke format projection] 
+      :or {
+        fill "lightgrey" 
+        stroke "white" 
+        format "topojson" 
+        projection "albersUsa"}}]
+  (merge
+    (merge-with merge 
+      (data-spec polygon) {:data {:format {:type format :feature feature}}})
+    {
+      :projection {:type projection}
+      :mark {
+        :type "geoshape"
+        :fill fill
+        :stroke stroke}}))
+
+(defn- geo-point
+  [point lon-field lat-field & 
+    {
+      :keys [projection size]
+      :or {
+        projection "albersUsa"
+        size 7}}]
+  (merge
+    (data-spec point)
+    {
+      :projection {:type projection}
+      :mark "circle"
+      :encoding {
+        :size {:value size}
+        :longitude {:field lon-field :type "quantitative"}
+        :latitude {:field lat-field :type "quantitative"}}}))
 
 (defn bigfoot-sightings-by-year [bigfoot-data]
   "Draws a line chart of the number of bigfoot sightings each year."
@@ -86,36 +122,17 @@
   "Draws a histogram of the bigfoot sightings by wind speed."
   (histogram "wind_speed" bigfoot-data :step 1))
 
-(defn bigfoot-sightings-map [bigfoot-data usa]
-  ;; NOTE: The topojson pulled from the top-ish google results are pretty
-  ;; mangled when I try to use with Vega. Use the one in vega-datasets.
+(defn bigfoot-sightings-map [bigfoot-data usa & 
   {
-    :width 800
-    :height 600
+    :keys [width height] 
+    :or {width 800 height 600}}]
+  "Draws a map of the bigfoot sightings."
+  {
+    :width width
+    :height height
     :layer [
-      {
-        :data {
-          :values usa
-          :format {
-            :type "topojson"
-            :feature "states"}}
-        :projection {:type "albersUsa"}
-        :mark {
-          :type "geoshape"
-          :fill "lightgrey"
-          :stroke "white"}}
-      {
-        :data {
-          :values 
-          (->> bigfoot-data
-            (map #(select-keys % [:longitude :latitude]))
-            (remove-blanks :longitude))}
-        :projection {:type "albersUsa"}
-        :mark "circle"
-        :encoding {
-          :size {:value 7}
-          :longitude {:field "longitude" :type "quantitative"}
-          :latitude {:field "latitude" :type "quantitative"}}}]})        
+      (geo-polygon usa "states")
+      (geo-point bigfoot-data "longitude" "latitude")]})
 
 (defn bigfoot-dashboard [bigfoot-data]
   (let [width 1200
