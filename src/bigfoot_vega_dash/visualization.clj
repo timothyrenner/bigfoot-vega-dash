@@ -139,18 +139,21 @@
         autosize-spec {:autosize {:type "fit" :contains "padding"}}]
     {
       :datasets {
-        :bigfoot-data 
-          (map #(dissoc % :summary :observed :location_details) bigfoot-data)
+        :bigfoot
+          (->> bigfoot-data
+              ;; This removes any points that don't have weather as well.
+              (remove-blanks :longitude)
+              (map (fn [m] (dissoc m :summary :observed :location_details))))
         ;; NOTE: Named datasets don't _appear_ to work properly for polygons.
         ;; Will need to dig in to this more later, but for now polygons
         ;; are inlined.
       }
       :vconcat [
         (merge
-          (bigfoot-sightings-map "bigfoot-data" usa :width width)
+          (bigfoot-sightings-map "bigfoot" usa :width width)
           autosize-spec)
         (merge 
-          (bigfoot-sightings-by-year "bigfoot-data") 
+          (bigfoot-sightings-by-year "bigfoot") 
           {:width width} 
           autosize-spec)
         {:hconcat [
@@ -158,18 +161,18 @@
           ;; the plots in the layout.
           ;; NOTE: The "encouraged" way to do this is to use repeat.
           (merge 
-            (bigfoot-sightings-by-humidity "bigfoot-data") 
+            (bigfoot-sightings-by-humidity "bigfoot") 
             {:width (/ width 5)}
             autosize-spec)
           (merge 
-            (bigfoot-sightings-by-temperature "bigfoot-data")
+            (bigfoot-sightings-by-temperature "bigfoot")
             {:width (/ width 5)}
             autosize-spec)
           (merge
-            (bigfoot-sightings-by-wind-speed "bigfoot-data")
+            (bigfoot-sightings-by-wind-speed "bigfoot")
             {:width (/ width 5)}
             autosize-spec)
           (merge
-            (bigfoot-sightings-by-visibility "bigfoot-data")
+            (bigfoot-sightings-by-visibility "bigfoot")
             {:width (/ width 5)}
             autosize-spec)]}]}))
