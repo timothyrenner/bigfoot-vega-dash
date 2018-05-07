@@ -134,21 +134,23 @@
       (geo-polygon usa "states")
       (geo-point bigfoot-data "longitude" "latitude")]})
 
-(defn bigfoot-dashboard [bigfoot-data]
+(defn bigfoot-dashboard [bigfoot-data usa]
   (let [width 1200
         autosize-spec {:autosize {:type "fit" :contains "padding"}}]
     {
       :datasets {
         :bigfoot-data 
           (map #(dissoc % :summary :observed :location_details) bigfoot-data)
+        ;; NOTE: Named datasets don't _appear_ to work properly for polygons.
+        ;; Will need to dig in to this more later, but for now polygons
+        ;; are inlined.
       }
       :vconcat [
-        (merge 
-          (bigfoot-sightings-by-year "bigfoot-data") 
-          {:width width} 
+        (merge
+          (bigfoot-sightings-map "bigfoot-data" usa :width width)
           autosize-spec)
         (merge 
-          (bigfoot-sightings-by-state "bigfoot-data") 
+          (bigfoot-sightings-by-year "bigfoot-data") 
           {:width width} 
           autosize-spec)
         {:hconcat [

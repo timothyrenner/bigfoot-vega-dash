@@ -16,9 +16,7 @@
     output-file (if-let [f (get args 2)] f "bigfoot.html")
     bigfoot-data (bigv/csv-to-maps data-file)
     usa (-> polygon-file slurp json/read-str)
-    ;; Debug - just the map for now since it's the hardest.
-    ;visualization (bigv/bigfoot-sightings-map bigfoot-data usa)
-    visualization (bigv/bigfoot-dashboard bigfoot-data)
+    visualization (bigv/bigfoot-dashboard bigfoot-data usa)
     ]
     (spit output-file
       (html5

@@ -1,6 +1,8 @@
 * Dashboard
-** TODO Integrate map into the dash.
+** DONE Integrate map into the dash.
+** TODO Filter blanks out of csv dataset.
 ** TODO Add interactivity.
+** TODO Track down issue with named topojson dataset for polygons.
 
 * Individual Plots
 ** DONE Refactor plots to use named datasets.
