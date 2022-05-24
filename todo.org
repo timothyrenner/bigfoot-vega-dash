@@ -1,7 +1,8 @@
 * Dashboard
 ** DONE Integrate map into the dash.
-** DONE Filter blanks out of csv dataset.co
-** TODO Add interactivity.
+** DONE Filter blanks out of csv dataset.
+** TODO Filter non-us points out of csv dataset.
+** TODO Add interactivity - selection on the map filters data below.
 ** TODO Track down issue with named topojson dataset for polygons.
 
 * Individual Plots
